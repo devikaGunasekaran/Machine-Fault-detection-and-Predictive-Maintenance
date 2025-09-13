@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Machine Monitoring Dashboard</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      margin: 20px 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .status-box {
+      margin-top: 40px;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .status-ok {
+      background: #2ecc71;
+    }
+
+    .status-alert {
+      background: #e74c3c;
+    }
+
+    @keyframes fadeInDown {
+      0% { transform: translateY(-40px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .popup-alert {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #e74c3c;
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 9999;
+      font-size: 1.1em;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ Machine Monitoring Dashboard</h1>
+
+  <div>
+    <button onclick="updateMaintenanceDate()">Update Maintenance Date</button>
+  </div>
+
+  <div id="result" class="status-box status-ok">Waiting for prediction...</div>
+  <div id="maint_status" class="status-box status-ok">Checking maintenance status...</div>
+
+  <script>
+    function predict() {
+      fetch('/predict')
+        .then(res => res.json())
+        .then(data => {
+          const resultBox = document.getElementById('result');
+          if (data.label !== undefined) {
+            const isFault = data.prediction !== 0;
+            resultBox.className = 'status-box ' + (isFault ? 'status-alert' : 'status-ok');
+            resultBox.innerText = `🔍 Predicted Class: ${data.prediction} (${data.label})`;
+          } else {
+            resultBox.className = 'status-box status-alert';
+            resultBox.innerText = `Prediction Error: ${data.error}`;
+          }
+        })
+        .catch(error => {
+          document.getElementById('result').className = 'status-box status-alert';
+          document.getElementById('result').innerText = `Prediction Fetch Error: ${error}`;
+        });
+    }
+
+    function checkMaintenanceStatus() {
+      fetch('/maintenance_status')
+        .then(res => res.json())
+        .then(data => {
+          const maintBox = document.getElementById('maint_status');
+          if (data.maintenance_due !== undefined) {
+            if (data.maintenance_due) {
+              maintBox.className = 'status-box status-alert';
+              maintBox.innerText = "⚠️ Maintenance is overdue! Please service the machine.";
+              showPopup("⚠️ Maintenance Alert Sent via Email & SMS!");
+            } else {
+              maintBox.className = 'status-box status-ok';
+              maintBox.innerText = "✅ Maintenance is up to date.";
+            }
+          } else {
+            maintBox.className = 'status-box status-alert';
+            maintBox.innerText = `Error: ${data.error}`;
+          }
+        })
+        .catch(error => {
+          document.getElementById('maint_status').className = 'status-box status-alert';
+          document.getElementById('maint_status').innerText = `Status Check Error: ${error}`;
+        });
+    }
+
+    function updateMaintenanceDate() {
+      fetch('/update_maintenance', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message);
+          checkMaintenanceStatus();
+        })
+        .catch(error => alert("Update Error: " + error));
+    }
+
+    function showPopup(message) {
+      const popup = document.createElement('div');
+      popup.className = 'popup-alert';
+      popup.innerText = message;
+      document.body.appendChild(popup);
+
+      setTimeout(() => {
+        popup.style.transition = 'opacity 0.5s ease-out';
+        popup.style.opacity = '0';
+        setTimeout(() => popup.remove(), 500);
+      }, 4000);
+    }
+
+    // Auto-run
+    window.onload = () => {
+      predict();
+      checkMaintenanceStatus();
+      setInterval(predict, 60000);         // every 1 minute
+      setInterval(checkMaintenanceStatus, 10800000); // every 3 hours
+    };
+  </script>
+</body>
+</html>
