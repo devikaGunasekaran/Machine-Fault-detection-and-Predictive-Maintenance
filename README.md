@@ -1,6 +1,6 @@
-## 🛠️ Machine Fault Detection & Predictive Maintenance  
+# 🛠️ Machine Fault Detection & Predictive Maintenance  
 
-# 📌 Overview  
+## 📌 Overview  
 This project is a **Smart Automation System** for real-time **machine fault detection** and **predictive maintenance**.  
 It combines **Machine Learning (XGBoost)**, and **automation alerts** to prevent unexpected breakdowns.  
 
