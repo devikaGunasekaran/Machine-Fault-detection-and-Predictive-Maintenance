@@ -1,6 +1,6 @@
-# 🛠️ Machine Fault Detection & Predictive Maintenance  
+## 🛠️ Machine Fault Detection & Predictive Maintenance  
 
-## 📌 Overview  
+# 📌 Overview  
 This project is a **Smart Automation System** for real-time **machine fault detection** and **predictive maintenance**.  
 It combines **Machine Learning (XGBoost)**, and **automation alerts** to prevent unexpected breakdowns.  
 
@@ -16,7 +16,6 @@ If a fault or maintenance issue is detected, the system automatically sends:
 
 A **dashboard frontend** allows users to view the current status and update maintenance logs.  
 
----
 
 ## 🚀 Features  
 - 🔍 **Real-time fault detection** using ML model (XGBoost).  
@@ -25,7 +24,6 @@ A **dashboard frontend** allows users to view the current status and update main
 - 🔄 **Firebase Realtime Database** integration for storing sensor and maintenance data.  
 - ⏰ **Predictive maintenance alerts** every 3 hours if service is overdue.  
 
----
 
 ## 🏗️ Tech Stack  
 ### **Backend**  
@@ -39,7 +37,6 @@ A **dashboard frontend** allows users to view the current status and update main
 - HTML, CSS, JavaScript  
 - Animated dashboard UI  
 
----
 
 ## ⚙️ How It Works  
 1. Sensor data is pushed into **Firebase** (latest readings).  
