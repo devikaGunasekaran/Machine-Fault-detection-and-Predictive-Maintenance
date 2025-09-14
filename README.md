@@ -47,3 +47,5 @@ A **dashboard frontend** allows users to view the current status and update main
    - If no update is recorded for **3+ days**, a **maintenance alert** is sent every 3 hours until resolved.  
 6. Frontend dashboard updates automatically, showing prediction and maintenance status.  
 
+<img width="1920" height="1008" alt="Screenshot 2025-09-14 111335" src="https://github.com/user-attachments/assets/f00946a3-6fb2-454d-b411-0d69e62415fe" />
+
